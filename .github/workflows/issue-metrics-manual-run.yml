@@ -45,3 +45,4 @@ jobs:
           title: Monthly issue metrics report ${{ inputs.report_date_start }} to ${{ inputs.report_date_end }}
           token: ${{ secrets.GITHUB_TOKEN }}
           content-filepath: ./issue_metrics.md
+          asignees: brmur
