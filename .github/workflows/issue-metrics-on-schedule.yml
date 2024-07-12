@@ -1,0 +1,42 @@
+# This workflow searches for issues/pull requests/discussions in a repository, measures several metrics, 
+# and generates a report in form of a GitHub issue.
+#
+# You can adjust the behavior by modifying this file.
+# For more information, see:
+# https://github.com/marketplace/actions/issue-metrics
+
+name: Monthly issue metrics
+on:  # yamllint disable-line rule:truthy
+  workflow_dispatch:
+  schedule:
+    - cron: '3 2 1 * *'
+permissions:
+  issues: write
+  pull-requests: read
+
+jobs:
+  build:
+    name: Issue metrics
+    runs-on: ubuntu-latest
+    steps:
+      - name: Get dates for last month
+        shell: bash
+        run: |
+          # Calculate the first day of the previous month
+          first_day=${{ inputs.report_date_start }} >> "$GITHUB_ENV"
+
+          # Calculate the last day of the previous month
+          last_day=${{ inputs.report_date_end }} >> "$GITHUB_ENV"
+
+      - name: Run issue-metrics tool
+        uses: github/issue-metrics@v2
+        env:
+          GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+          SEARCH_QUERY: 'repo:awsdocs/aws-doc-sdk-examples is:pr closed:${{ inputs.report_date_start }}..${{ inputs.report_date_end }}'
+
+      - name: Create issue
+        uses: peter-evans/create-issue-from-file@v5
+        with:
+          title: Monthly issue metrics report ${{ env.first_day }} to ${{ env.last_day }}
+          token: ${{ secrets.GITHUB_TOKEN }}
+          content-filepath: ./issue_metrics.md
