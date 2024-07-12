@@ -10,10 +10,10 @@ on:  # yamllint disable-line rule:truthy
   workflow_dispatch:
     inputs:
       report_date_start:
-        description: "Report date start(01/01/2024)"
+        description: "Report date start(YYYY/MM/DD)"
         required: false
       report_date_end:
-        description: "Report date end(11/07/2024)"
+        description: "Report date end(YYYY/MM/DD)"
         required: false
 permissions:
   issues: write
