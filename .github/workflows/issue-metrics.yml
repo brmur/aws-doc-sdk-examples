@@ -10,10 +10,10 @@ on:  # yamllint disable-line rule:truthy
   workflow_dispatch:
     inputs:
       report_date_start:
-        description: "Report date start(YYYY/MM/DD)"
+        description: "Report date start(YYYY-MM-DD)"
         required: false
       report_date_end:
-        description: "Report date end(YYYY/MM/DD)"
+        description: "Report date end(YYYY-MM-DD)"
         required: false
 permissions:
   issues: write
@@ -37,7 +37,7 @@ jobs:
         uses: github/issue-metrics@v2
         env:
           GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
-          SEARCH_QUERY: 'repo:awsdocs/aws-doc-sdk-examples created:2023-05-01..2023-05-31'
+          SEARCH_QUERY: 'repo:awsdocs/aws-doc-sdk-examples created:${{env.first_day}}..${{env.last_day}}'
 
       - name: Create issue
         uses: peter-evans/create-issue-from-file@v5
