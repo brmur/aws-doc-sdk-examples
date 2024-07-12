@@ -42,6 +42,6 @@ jobs:
       - name: Create issue
         uses: peter-evans/create-issue-from-file@v5
         with:
-          title: Monthly issue metrics report ${{ env.first_day }} to ${{ env.last_day }}
+          title: Monthly issue metrics report ${{ inputs.report_date_start }} to ${{ inputs.report_date_end }}
           token: ${{ secrets.GITHUB_TOKEN }}
           content-filepath: ./issue_metrics.md
