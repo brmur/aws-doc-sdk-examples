@@ -1,5 +1,5 @@
 # This workflow searches for issues/pull requests/discussions in a repository, measures several metrics, 
-# and generates a report in form of a GitHub issue.
+# and generates a report in form of a GitHub issue. Maximum 1 month interval to gurantee result with not be too large to be returned.
 #
 # You can adjust the behavior by modifying this file.
 # For more information, see:
