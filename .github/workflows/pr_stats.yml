@@ -11,8 +11,8 @@ jobs:
         uses: flowwer-dev/pull-request-stats@master
         with:
           token: ${{ secrets.GITHUB_TOKEN }}
-          organization: 'piedpiper'
-          period: 7
+          repositories: 'awsdocs/aws-doc-sdk-examples'
+          period: 180
           charts: true
           disableLinks: true
           sortBy: 'COMMENTS'
