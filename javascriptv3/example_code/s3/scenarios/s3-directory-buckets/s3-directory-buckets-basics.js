@@ -136,8 +136,7 @@ const sdkCreateCreateVpcAndVpcEndpoint = new ScenarioAction(
           ServiceName: serviceName,
         }),
       );
-      state.vpcEndPoint =
-        createEndPointResponse.VpcEndpoint.DnsEntries[0].DnsName;
+      state.vpcEndPoint = createEndPointResponse.VpcEndpoint.DnsEntries;
       console.log(
         `Success VPC Endpoint created, with ID ${state.vpcEndPoint}.`,
       );
