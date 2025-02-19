@@ -12,6 +12,9 @@
   "dependencies": {
     "@aws-crypto/sha256-browser": "^5.2.0",
     "@aws-doc-sdk-examples/lib": "^1.0.1",
+    "@aws-sdk/client-cloudformation": "^3.664.0",
+    "@aws-sdk/client-ec2": "^3.664.0",
+    "@aws-sdk/client-iam": "^3.744.0",
     "@aws-sdk/client-s3": "^3.664.0",
     "@aws-sdk/credential-providers": "^3.664.0",
     "@aws-sdk/lib-storage": "^3.664.0",
