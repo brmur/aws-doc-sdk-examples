@@ -391,7 +391,6 @@ const sdkGetObjectfromBothBuckets = new ScenarioAction(
     try {
       async function runExpressLoop() {
         await getObjectfromExpressBucket1000();
-        console.log("loop finished");
       }
 
       async function getObjectfromExpressBucket() {
@@ -411,7 +410,6 @@ const sdkGetObjectfromBothBuckets = new ScenarioAction(
         console.log("startTimeExpBucket", startTimeExpBucket);
         for (let i = 0; i < 1000; i++) {
           getObjectfromExpressBucket();
-          console.log("exp loop running");
         }
         const endTimeExpBucket = Date.now();
         const downloadTimeExpBucket = startTimeExpBucket - endTimeExpBucket;
@@ -427,7 +425,6 @@ const sdkGetObjectfromBothBuckets = new ScenarioAction(
     try {
       async function runRegularLoop() {
         await getObjectfromRegularBucket1000();
-        console.log("loop finished");
       }
 
       async function getObjectfromRegularBucket() {
@@ -440,6 +437,7 @@ const sdkGetObjectfromBothBuckets = new ScenarioAction(
           },
         });
         const response = await s3Client.send(command);
+        console.log("response", response);
       }
 
       async function getObjectfromRegularBucket1000() {
@@ -447,7 +445,6 @@ const sdkGetObjectfromBothBuckets = new ScenarioAction(
         console.log("startTimeRegBucket", startTimeRegBucket);
         for (let i = 0; i < 1000; i++) {
           getObjectfromRegularBucket();
-          console.log("reg loop running");
         }
         const endTimeRegBucket = Date.now();
         const downloadTimeRegBucket = startTimeRegBucket - endTimeRegBucket;
