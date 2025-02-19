@@ -45,7 +45,7 @@ const __dirname = dirname(__filename);
 const stackName = "s3DirectoryBucketsBasicsStack";
 const region = "us-east-1";
 
-import data from "./names.json" assert { type: "json" };
+import data from "./names.json" with { type: "json" };
 
 /**
  * @typedef {{
