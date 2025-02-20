@@ -315,6 +315,12 @@ const sdkCreateS3Buckets = new ScenarioAction(
             accessKeyId: `${state.expAccessKeyId}`,
             secretAccessKey: `${state.expSecretAccessKey}`,
           },
+          CreateBucketConfiguration: {
+            Bucket: {
+              DataRedundancy: "SingleAvailabilityZone",
+              Type: "Directory",
+            },
+          },
         }),
       );
       state.expressBucketLocation = createBucketwithExpressClient.Location;
