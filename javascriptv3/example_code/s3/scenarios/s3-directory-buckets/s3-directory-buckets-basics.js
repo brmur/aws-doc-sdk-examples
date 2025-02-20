@@ -136,9 +136,10 @@ const sdkCreateCreateVpcAndVpcEndpoint = new ScenarioAction(
           ServiceName: serviceName,
         }),
       );
-      state.vpcEndPoint = createEndPointResponse.VpcEndpoint.DnsEntries;
+      state.vpcEndPoint = createEndPointResponse.VpcEndpoint.DnsName;
       console.log(
-        `Success VPC Endpoint created, with ID ${state.vpcEndPoint}.`,
+        "Success VPC Endpoint created, with ID ",
+        createEndPointResponse,
       );
     } catch (caught) {
       console.error(`${caught.message}`);
@@ -218,6 +219,7 @@ const sdkCreateS3Clients = new ScenarioAction(
           UserName: `${state.stack[0].OutputValue}`,
         }),
       );
+      console.log("createRegularClientResponse", createRegularClientResponse);
       state.regAccessKeyId = createRegularClientResponse.AccessKey.AccessKeyId;
       state.regSecretAccessKey =
         createRegularClientResponse.AccessKey.SecretAccessKey;
@@ -231,9 +233,11 @@ const sdkCreateS3Clients = new ScenarioAction(
     try {
       const createExpressClientResponse = await iamClient.send(
         new CreateAccessKeyCommand({
-          UserName: `${state.stack[0].OutputValue}`,
+          UserName: `${state.stack[1].OutputValue}`,
         }),
       );
+      console.log("createExpressClientResponse", createExpressClientResponse);
+
       state.expAccessKeyId = createExpressClientResponse.AccessKey.AccessKeyId;
       state.expSecretAccessKey =
         createExpressClientResponse.AccessKey.SecretAccessKey;
@@ -258,21 +262,22 @@ an object into the normal bucket, and copy it over to the Directory bucket.`,
 const sdkCreateS3Buckets = new ScenarioAction(
   "sdkCreateS3Buckets",
   async (/** @type {State} */ state) => {
-    const s3regClient = new S3Client({
-      endpoint: `${state.vpcEndPoint}`,
+    /*    const s3regClient = new S3Client({
+              region: region,
       credentials: {
-        secretAccessKey: `${state.regAccessKeyId}`,
-        accessKeyId: `${state.regSecretAccessKey}`,
+        accessKeyId: `${state.regAccessKeyId}`,
+        secretAccessKey: `${state.regSecretAccessKey}`,
       },
     });
 
     const s3expClient = new S3Client({
-      endpoint: `${state.vpcEndPoint}`,
-      credentials: {
-        secretAccessKey: `${state.expAccessKeyId}`,
-        accessKeyId: `${state.expSecretAccessKey}`,
+      region: region,
+        credentials: {
+        accessKeyId: `${state.expAccessKeyId}`,
+        secretAccessKey: `${state.expSecretAccessKey}`
       },
-    });
+    });*/
+    const s3Client = new S3Client({});
 
     try {
       // Optionally edit the default key name prefix of the copied object in ./names.json.
@@ -280,9 +285,13 @@ const sdkCreateS3Buckets = new ScenarioAction(
       const regBucket = "regular-bucket";
       state.regularBucketName = `${regBucketNamePrefix}${regBucket}`;
 
-      const createBucketwithRegularClient = await s3regClient.send(
+      const createBucketwithRegularClient = await s3Client.send(
         new CreateBucketCommand({
           Bucket: `${state.regularBucketName}`,
+          credentials: {
+            accessKeyId: `${state.regAccessKeyId}`,
+            secretAccessKey: `${state.regSecretAccessKey}`,
+          },
         }),
       );
       state.regularBucketLocation = createBucketwithRegularClient.Location;
@@ -299,9 +308,13 @@ const sdkCreateS3Buckets = new ScenarioAction(
       const expBucket = "express-bucket";
       state.expressBucketName = `${expBucketNamePrefix}${expBucket}`;
 
-      const createBucketwithExpressClient = await s3expClient.send(
+      const createBucketwithExpressClient = await s3Client.send(
         new CreateBucketCommand({
           Bucket: `${state.expressBucketName}`,
+          credentials: {
+            accessKeyId: `${state.expAccessKeyId}`,
+            secretAccessKey: `${state.expSecretAccessKey}`,
+          },
         }),
       );
       state.expressBucketLocation = createBucketwithExpressClient.Location;
@@ -336,28 +349,31 @@ const sdkCreateAndCopyObject = new ScenarioAction(
     const keyNamePrefix = data.names.keyname;
     const keyName = "file01.txt";
     const keyNameFinal = `${keyNamePrefix}${keyName}`;
-    const s3regClient = new S3Client({
-      endpoint: `${state.vpcEndPoint}`,
+    /*    const s3regClient = new S3Client({
       credentials: {
-        secretAccessKey: `${state.regAccessKeyId}`,
-        accessKeyId: `${state.regSecretAccessKey}`,
+        accessKeyId: `${state.regAccessKeyId}`,
+        secretAccessKey: `${state.regSecretAccessKey}`,
       },
     });
 
     const s3expClient = new S3Client({
-      endpoint: `${state.vpcEndPoint}`,
       credentials: {
-        secretAccessKey: `${state.expAccessKeyId}`,
-        accessKeyId: `${state.expSecretAccessKey}`,
+        accessKeyId: `${state.expAccessKeyId}`,
+        secretAccessKey: `${state.expSecretAccessKey}`,
       },
-    });
+    });*/
+    const s3Client = new S3Client({});
 
     try {
-      const putObjectInRegularBucket = await s3regClient.send(
+      const putObjectInRegularBucket = await s3Client.send(
         new PutObjectCommand({
           Bucket: `${state.regularBucketName}`,
           Key: keyNameFinal,
           Body: await readFile(filePath),
+          credentials: {
+            accessKeyId: `${state.regAccessKeyId}`,
+            secretAccessKey: `${state.regSecretAccessKey}`,
+          },
         }),
       );
       console.log(
@@ -371,11 +387,15 @@ const sdkCreateAndCopyObject = new ScenarioAction(
       const copySource = `${state.regularBucketName}/${keyNamePrefix}${keyName}`;
       const copiedKey = `${keyNamePrefix}${keyName}`;
 
-      const copyObjectToExpressBucket = await s3expClient.send(
+      const copyObjectToExpressBucket = await s3Client.send(
         new CopyObjectCommand({
           CopySource: copySource,
           Bucket: `${state.expressBucketName}`,
           Key: copiedKey,
+          credentials: {
+            accessKeyId: `${state.expAccessKeyId}`,
+            secretAccessKey: `${state.expSecretAccessKey}`,
+          },
         }),
       );
       state.objectNameInExpressBucket = `${keyNamePrefix}${keyName}`;
@@ -399,21 +419,20 @@ if this example is run in an EC2 instance in the same AZ as the bucket.`,
 const sdkGetObjectfromBothBuckets = new ScenarioAction(
   "sdkGetObjectfromBothBuckets",
   async (/** @type {State} */ state) => {
-    const s3regClient = new S3Client({
-      endpoint: `${state.vpcEndPoint}`,
+    /*    const s3regClient = new S3Client({
       credentials: {
-        secretAccessKey: `${state.regAccessKeyId}`,
-        accessKeyId: `${state.regSecretAccessKey}`,
+        accessKeyId: `${state.regAccessKeyId}`,
+        secretAccessKey: `${state.regSecretAccessKey}`,
       },
     });
 
     const s3expClient = new S3Client({
-      endpoint: `${state.vpcEndPoint}`,
       credentials: {
-        secretAccessKey: `${state.expAccessKeyId}`,
-        accessKeyId: `${state.expSecretAccessKey}`,
+        accessKeyId: `${state.expAccessKeyId}`,
+        secretAccessKey: `${state.expSecretAccessKey}`,
       },
-    });
+    });*/
+    const s3Client = new S3Client({});
     try {
       async function runExpressLoop() {
         await getObjectfromExpressBucket1000();
@@ -423,8 +442,12 @@ const sdkGetObjectfromBothBuckets = new ScenarioAction(
         const command = new GetObjectCommand({
           Bucket: `${state.expressBucketName}`,
           Key: `${state.objectNameInExpressBucket}`,
+          credentials: {
+            accessKeyId: `${state.expAccessKeyId}`,
+            secretAccessKey: `${state.expSecretAccessKey}`,
+          },
         });
-        const response = await s3expClient.send(command);
+        const response = await s3Client.send(command);
       }
 
       async function getObjectfromExpressBucket1000() {
@@ -453,8 +476,12 @@ const sdkGetObjectfromBothBuckets = new ScenarioAction(
         const command = new GetObjectCommand({
           Bucket: `${state.regularBucketName}`,
           Key: `${state.objectNameInRegularBucket}`,
+          credentials: {
+            accessKeyId: `${state.regAccessKeyId}`,
+            secretAccessKey: `${state.regSecretAccessKey}`,
+          },
         });
-        const response = await s3regClient.send(command);
+        const response = await s3Client.send(command);
       }
 
       async function getObjectfromRegularBucket1000() {
