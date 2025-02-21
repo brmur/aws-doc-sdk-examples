@@ -269,10 +269,8 @@ const sdkCreateS3Buckets = new ScenarioAction(
         new CreateBucketCommand({
           Bucket: `${state.regularBucketName}`,
           credentials: {
-            credentials: {
-              accessKeyId: `${state.regAccessKeyId}`,
-              secretAccessKey: `${state.regSecretAccessKey}`,
-            },
+            accessKeyId: `${state.regAccessKeyId}`,
+            secretAccessKey: `${state.regSecretAccessKey}`,
           },
         }),
       );
@@ -288,11 +286,11 @@ const sdkCreateS3Buckets = new ScenarioAction(
       // Optionally edit the default key name prefix of the copied object in ./names.json.
       const expBucketNamePrefix = data.names.expbucketname;
       const expBucket = "express-bucket";
-      state.expressBucketName = `${expBucketNamePrefix}${expBucket}`;
+      state.directoryBucketName = `${expBucketNamePrefix}${expBucket}`;
 
-      const createBucketwithExpressCreds = await s3Client.send(
+      const createDirectoryBucket = await s3Client.send(
         new CreateBucketCommand({
-          Bucket: `${state.expressBucketName}`,
+          Bucket: `${state.directoryBucketName}`,
           CreateBucketConfiguration: {
             Bucket: {
               DataRedundancy: "SingleAvailabilityZone",
@@ -300,15 +298,15 @@ const sdkCreateS3Buckets = new ScenarioAction(
             },
           },
           credentials: {
-            accessKeyId: `${state.expAccessKeyId}`,
-            secretAccessKey: `${state.expSecretAccessKey}`,
+            accessKeyId: `${state.regAccessKeyId}`,
+            secretAccessKey: `${state.regSecretAccessKey}`,
           },
         }),
       );
-      state.expressBucketLocation = createBucketwithExpressCreds.Location;
+      state.expressBucketLocation = createDirectoryBucket.Location;
 
       console.log(
-        `Bucket ${state.expressBucketName} created at ${createBucketwithExpressCreds.Location}`,
+        `Bucket ${state.directoryBucketName} created at ${createDirectoryBucket.Location}`,
       );
     } catch (caught) {
       console.error(caught.message);
@@ -402,7 +400,7 @@ const sdkGetObjectfromBothBuckets = new ScenarioAction(
 
       async function getObjectfromExpressBucket() {
         const command = new GetObjectCommand({
-          Bucket: `${state.expressBucketName}`,
+          Bucket: `${state.directoryBucketName}`,
           Key: `${state.objectNameInExpressBucket}`,
           credentials: {
             accessKeyId: `${state.expAccessKeyId}`,
@@ -419,10 +417,10 @@ const sdkGetObjectfromBothBuckets = new ScenarioAction(
           getObjectfromExpressBucket();
         }
         const endTimeExpBucket = Date.now();
-        const downloadTimeExpBucket = startTimeExpBucket - endTimeExpBucket;
-        state.downloadTimefromExpressBucket = downloadTimeExpBucket;
+        const downloadTimeDirBucket = startTimeExpBucket - endTimeExpBucket;
+        state.downloadTimefromDirectoryBucket = downloadTimeDirBucket;
         console.log(
-          `The download time from the express bucket was ${state.downloadTimefromExpressBucket} milliseconds`,
+          `The download time from the express bucket was ${state.downloadTimefromDirectoryBucket} milliseconds`,
         );
       }
       runExpressLoop();
@@ -460,7 +458,7 @@ const sdkGetObjectfromBothBuckets = new ScenarioAction(
         );
         const timedifference =
           state.downloadTimefromRegularBucket -
-          state.downloadTimefromExpressBucket;
+          state.downloadTimefromDirectoryBucket;
         console.log(`The time difference is ${timedifference} milliseconds.`);
       }
       runRegularLoop();
@@ -521,7 +519,7 @@ const myScenario = new Scenario(
     objectNameInRegularBucket: {},
     objectNameInExpressBucket: {},
     downloadTimefromRegularBucket: {},
-    downloadTimefromExpressBucket: {},
+    downloadTimefromDirectoryBucket: {},
   },
 );
 
