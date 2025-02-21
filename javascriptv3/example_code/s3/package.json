@@ -27,6 +27,7 @@
     "libs": "*"
   },
   "devDependencies": {
+    "prettier": "^3.5.1",
     "vitest": "^2.1.2"
   }
 }

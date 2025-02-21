@@ -46,6 +46,7 @@ const stackName = "s3DirectoryBucketsBasicsStack";
 const region = "us-east-1";
 
 import data from "./names.json" with { type: "json" };
+const s3Client = new S3Client({});
 
 /**
  * @typedef {{
@@ -76,19 +77,21 @@ const pressEnter = new ScenarioInput("continue", "Press Enter to continue", {
 
 const greet = new ScenarioOutput(
   "greet",
-  `Let's get started! First, please note that S3 Express One Zone works best when working within the AWS infrastructure,
-specifically when working in the same Availability Zone. To see the best results in this example, and when you implement
-Directory buckets into your infrastructure, it is best to put your Compute resources in the same AZ as your Directory bucket.`,
+  "Let's get started! First, please note that S3 Express One Zone works best when working within the AWS infrastructure, " +
+    "specifically when working in the same Availability Zone. To see the best results in this example, and when you implement " +
+    "Directory buckets into your infrastructure, it is best to put your Compute resources in the same AZ as your Directory bucket.",
   { header: true },
 );
 const displayCreateVpcAndVpcEndpoint = new ScenarioOutput(
   "displayCreateVpcAndVpcEndpoint",
-  `1. If you are running this in an EC2 instance located in the same AZ as your intended Directory buckets, we'll set up a new VPC and VPC Endpoint.`,
+  "1. If you are running this in an EC2 instance located in the same AZ as your intended Directory buckets, " +
+    "we'll set up a new VPC and VPC Endpoint.",
 );
 
 const confirmIfUsingEc2Instance = new ScenarioInput(
   "confirmIfUsingEc2Instance",
-  "Type 'Y' if you are running this examples on an EC2 instance and want to create a VPC, or press enter to skip this step: ",
+  "Type 'Y' if you are running this examples on an EC2 instance and want to create a VPC, " +
+    "or press enter to skip this step: ",
   { type: "input", default: "" },
 );
 
@@ -136,11 +139,8 @@ const sdkCreateCreateVpcAndVpcEndpoint = new ScenarioAction(
           ServiceName: serviceName,
         }),
       );
-      state.vpcEndPoint = createEndPointResponse.VpcEndpoint.DnsName;
-      console.log(
-        "Success VPC Endpoint created, with ID ",
-        createEndPointResponse,
-      );
+      state.vpcEndPoint = createEndPointResponse.VpcEndpoint.VpcEndpointId;
+      console.log("VPC Gateway Endpoint is: ", state.vpcEndPoint);
     } catch (caught) {
       console.error(`${caught.message}`);
       throw caught;
@@ -154,9 +154,8 @@ const sdkCreateCreateVpcAndVpcEndpoint = new ScenarioAction(
 
 const displayBuildCloudFormationStack = new ScenarioOutput(
   "displayBuildCloudFormationStack",
-  `2. Policies, users, and roles with CDK.
-  
-Now, we'll set up some policies, roles, and a user. This user will only have permissions to do S3 Express One Zone actions.`,
+  "2. Policies, users, and roles with CDK. \n" +
+    "Now, we'll set up some policies, roles, and users - one regular user, and one with permissions to do S3 Express One Zone actions.",
 );
 
 const sdkBuildCloudFormationStack = new ScenarioAction(
@@ -201,17 +200,15 @@ const sdkBuildCloudFormationStack = new ScenarioAction(
   },
 );
 
-const displayCreateS3Clients = new ScenarioOutput(
-  "displayCreateS3Clients",
-  `3. Create an additional client using the credentials with S3 Express permissions.\n";
-  This client is created with the credentials associated with the user account with the S3 Express policy attached, so it can perform S3 Express operations.`,
+const displayGetCredentials = new ScenarioOutput(
+  "displayGetCredentials",
+  "3. Now let's create get the credentials for the user with S3 Express permissions so it can perform S3 Express operations.",
 );
 
-const sdkCreateS3Clients = new ScenarioAction(
-  "sdkCreateS3Clients",
+const sdkGetCredentials = new ScenarioAction(
+  "sdkCreateS3Buckets",
   async (/** @type {State} */ state) => {
     let createRegularClientResponse;
-    let createExpressClientResponse;
     const iamClient = new IAMClient({});
     try {
       createRegularClientResponse = await iamClient.send(
@@ -219,31 +216,31 @@ const sdkCreateS3Clients = new ScenarioAction(
           UserName: `${state.stack[0].OutputValue}`,
         }),
       );
-      console.log("createRegularClientResponse", createRegularClientResponse);
       state.regAccessKeyId = createRegularClientResponse.AccessKey.AccessKeyId;
       state.regSecretAccessKey =
         createRegularClientResponse.AccessKey.SecretAccessKey;
       console.log(
-        `Regular user access key: ${state.regAccessKeyId}
-        Regular use secret access key: ${state.regSecretAccessKey}`,
+        `S3 client created using the regular user access key: ${state.regAccessKeyId}
+        and the regular use secret access key: ${state.regSecretAccessKey}`,
       );
     } catch (err) {
       console.log("Error", err);
     }
+
     try {
       const createExpressClientResponse = await iamClient.send(
         new CreateAccessKeyCommand({
           UserName: `${state.stack[1].OutputValue}`,
         }),
       );
-      console.log("createExpressClientResponse", createExpressClientResponse);
 
       state.expAccessKeyId = createExpressClientResponse.AccessKey.AccessKeyId;
       state.expSecretAccessKey =
         createExpressClientResponse.AccessKey.SecretAccessKey;
+
       console.log(
-        `Express user access key: ${state.expAccessKeyId}
-        Express use secret access key: ${state.expSecretAccessKey}`,
+        `S3 client created using the Express user access key: ${state.expAccessKeyId}
+        and the Express user secret access key: ${state.expSecretAccessKey}`,
       );
     } catch {
       console.log("Error");
@@ -253,48 +250,33 @@ const sdkCreateS3Clients = new ScenarioAction(
 
 const displayCreateS3Buckets = new ScenarioOutput(
   "displayCreateS3Buckets",
-  `4. Create two buckets.
-  Now we will create a Directory bucket which is the linchpin of the S3 Express One Zone service. Directory buckets 
-behave in different ways from regular S3 buckets which we will explore here. We'll also create a normal bucket, put 
-an object into the normal bucket, and copy it over to the Directory bucket.`,
+  "4. Create two buckets. \n" +
+    "Now we will create a Directory bucket which is the linchpin of the S3 Express One Zone service. \n" +
+    "Directory buckets behave in different ways from regular S3 buckets which we will explore here. \n" +
+    "We'll also create a normal bucket, put an object into the normal bucket, and copy it over to the Directory bucket.",
 );
 
 const sdkCreateS3Buckets = new ScenarioAction(
   "sdkCreateS3Buckets",
   async (/** @type {State} */ state) => {
-    /*    const s3regClient = new S3Client({
-              region: region,
-      credentials: {
-        accessKeyId: `${state.regAccessKeyId}`,
-        secretAccessKey: `${state.regSecretAccessKey}`,
-      },
-    });
-
-    const s3expClient = new S3Client({
-      region: region,
-        credentials: {
-        accessKeyId: `${state.expAccessKeyId}`,
-        secretAccessKey: `${state.expSecretAccessKey}`
-      },
-    });*/
-    const s3Client = new S3Client({});
-
     try {
       // Optionally edit the default key name prefix of the copied object in ./names.json.
       const regBucketNamePrefix = data.names.regbucketname;
       const regBucket = "regular-bucket";
       state.regularBucketName = `${regBucketNamePrefix}${regBucket}`;
 
-      const createBucketwithRegularClient = await s3Client.send(
+      const createBucketWithRegularCreds = await s3Client.send(
         new CreateBucketCommand({
           Bucket: `${state.regularBucketName}`,
           credentials: {
-            accessKeyId: `${state.regAccessKeyId}`,
-            secretAccessKey: `${state.regSecretAccessKey}`,
+            credentials: {
+              accessKeyId: `${state.regAccessKeyId}`,
+              secretAccessKey: `${state.regSecretAccessKey}`,
+            },
           },
         }),
       );
-      state.regularBucketLocation = createBucketwithRegularClient.Location;
+      state.regularBucketLocation = createBucketWithRegularCreds.Location;
       console.log(
         `Bucket ${state.regularBucketName} created at ${state.regularBucketLocation}`,
       );
@@ -308,25 +290,25 @@ const sdkCreateS3Buckets = new ScenarioAction(
       const expBucket = "express-bucket";
       state.expressBucketName = `${expBucketNamePrefix}${expBucket}`;
 
-      const createBucketwithExpressClient = await s3Client.send(
+      const createBucketwithExpressCreds = await s3Client.send(
         new CreateBucketCommand({
           Bucket: `${state.expressBucketName}`,
-          credentials: {
-            accessKeyId: `${state.expAccessKeyId}`,
-            secretAccessKey: `${state.expSecretAccessKey}`,
-          },
           CreateBucketConfiguration: {
             Bucket: {
               DataRedundancy: "SingleAvailabilityZone",
               Type: "Directory",
             },
           },
+          credentials: {
+            accessKeyId: `${state.expAccessKeyId}`,
+            secretAccessKey: `${state.expSecretAccessKey}`,
+          },
         }),
       );
-      state.expressBucketLocation = createBucketwithExpressClient.Location;
+      state.expressBucketLocation = createBucketwithExpressCreds.Location;
 
       console.log(
-        `Bucket ${state.expressBucketName} created at ${createBucketwithExpressClient.Location}`,
+        `Bucket ${state.expressBucketName} created at ${createBucketwithExpressCreds.Location}`,
       );
     } catch (caught) {
       console.error(caught.message);
@@ -337,13 +319,15 @@ const sdkCreateS3Buckets = new ScenarioAction(
 
 const displayCreateAndCopyObject = new ScenarioOutput(
   "displayCreateAndCopyObject",
-  `5. Create an object and copy it over.
-We'll create a basic object consisting of some text and upload it to the normal bucket.
-Next, we'll copy the object into the Directory bucket using the regular client.
-This works fine, because Copy operations are not restricted for Directory buckets.
-It's important to remember the user permissions when interacting with Directory buckets.
-Instead of validating permissions on every call as normal buckets do, Directory buckets utilize the user credentials and session token to validate.
-This allows for much faster connection speeds on every call. For single calls, this is low, but for many concurrent calls, this adds up to a lot of time saved.`,
+  "5. Create an object and copy it over.\n" +
+    "We'll create a basic object consisting of some text and upload it to the normal bucket. \n" +
+    "Next, we'll copy the object into the Directory bucket using the regular client.  \n" +
+    "This works fine, because Copy operations are not restricted for Directory buckets.  \n" +
+    "It's important to remember the user permissions when interacting with Directory buckets. \n" +
+    "Instead of validating permissions on every call as normal buckets do, Directory buckets  \n" +
+    "utilize the user credentials and session token to validate.  \n" +
+    "This allows for much faster connection speeds on every call. For single calls, this is low, \n" +
+    "but for many concurrent calls, this adds up to a lot of time saved.",
 );
 
 const sdkCreateAndCopyObject = new ScenarioAction(
@@ -355,20 +339,6 @@ const sdkCreateAndCopyObject = new ScenarioAction(
     const keyNamePrefix = data.names.keyname;
     const keyName = "file01.txt";
     const keyNameFinal = `${keyNamePrefix}${keyName}`;
-    /*    const s3regClient = new S3Client({
-      credentials: {
-        accessKeyId: `${state.regAccessKeyId}`,
-        secretAccessKey: `${state.regSecretAccessKey}`,
-      },
-    });
-
-    const s3expClient = new S3Client({
-      credentials: {
-        accessKeyId: `${state.expAccessKeyId}`,
-        secretAccessKey: `${state.expSecretAccessKey}`,
-      },
-    });*/
-    const s3Client = new S3Client({});
 
     try {
       const putObjectInRegularBucket = await s3Client.send(
@@ -416,29 +386,15 @@ const sdkCreateAndCopyObject = new ScenarioAction(
 
 const displayGetObjectfromBothBuckets = new ScenarioOutput(
   "displayGetObjectfromBothBuckets",
-  `6. Demonstrate performance difference.
-Now, let's do a performance test. We'll download the same object from each bucket 1000 times 
-and compare the total time needed. Note: the performance difference will be much more pronounced 
-if this example is run in an EC2 instance in the same AZ as the bucket.`,
+  "6. Demonstrate performance difference.\n" +
+    "Now, let's do a performance test. We'll download the same object from each bucket 1000 times \n" +
+    "and compare the total time needed. Note: the performance difference will be much more pronounced \n" +
+    "if this example is run in an EC2 instance in the same AZ as the bucket. \n",
 );
 
 const sdkGetObjectfromBothBuckets = new ScenarioAction(
   "sdkGetObjectfromBothBuckets",
   async (/** @type {State} */ state) => {
-    /*    const s3regClient = new S3Client({
-      credentials: {
-        accessKeyId: `${state.regAccessKeyId}`,
-        secretAccessKey: `${state.regSecretAccessKey}`,
-      },
-    });
-
-    const s3expClient = new S3Client({
-      credentials: {
-        accessKeyId: `${state.expAccessKeyId}`,
-        secretAccessKey: `${state.expSecretAccessKey}`,
-      },
-    });*/
-    const s3Client = new S3Client({});
     try {
       async function runExpressLoop() {
         await getObjectfromExpressBucket1000();
@@ -520,20 +476,19 @@ const goodbye = new ScenarioOutput(
 );
 
 const myScenario = new Scenario(
-  "IoTSiteWise Basics",
+  "S3 Directory Buckets Basics",
   [
     greet,
     pressEnter,
     displayCreateVpcAndVpcEndpoint,
-    pressEnter,
     confirmIfUsingEc2Instance,
     sdkCreateCreateVpcAndVpcEndpoint,
     pressEnter,
     displayBuildCloudFormationStack,
     sdkBuildCloudFormationStack,
-    displayCreateS3Clients,
+    displayGetCredentials,
     pressEnter,
-    sdkCreateS3Clients,
+    sdkGetCredentials,
     pressEnter,
     displayCreateS3Buckets,
     pressEnter,
