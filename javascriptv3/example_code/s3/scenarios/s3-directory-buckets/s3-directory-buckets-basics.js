@@ -21,6 +21,7 @@ import {
   PutObjectCommand,
   CopyObjectCommand,
   GetObjectCommand,
+  CreateSessionCommand,
 } from "@aws-sdk/client-s3";
 import {
   CloudFormationClient,
@@ -155,7 +156,7 @@ const sdkCreateCreateVpcAndVpcEndpoint = new ScenarioAction(
 const displayBuildCloudFormationStack = new ScenarioOutput(
   "displayBuildCloudFormationStack",
   "2. Policies, users, and roles with CDK. \n" +
-    "Now, we'll set up some policies, roles, and users - one regular user, and one with permissions to do S3 Express One Zone actions.",
+    "Now, we'll set up some policies, roles, and users - one regular user, and one with permissions to do S3 Express One Zone actions. This should take a minute or so.",
 );
 
 const sdkBuildCloudFormationStack = new ScenarioAction(
@@ -336,6 +337,20 @@ const sdkCreateAndCopyObject = new ScenarioAction(
     const keyName = "file01.txt";
     const keyNameFinal = `${keyNamePrefix}${keyName}`;
 
+    try {
+      const createSession = await s3Client.send(
+        new CreateSessionCommand({
+          Bucket: `${state.directoryBucketName}`,
+          credentials: {
+            accessKeyId: `${state.regAccessKeyId}`,
+            secretAccessKey: `${state.regSecretAccessKey}`,
+          },
+        }),
+      );
+      console.log("createSession ", createSession);
+    } catch (err) {
+      console.log("Error ", err);
+    }
     try {
       const putObjectInRegularBucket = await s3Client.send(
         new PutObjectCommand({
