@@ -220,8 +220,7 @@ const sdkGetCredentials = new ScenarioAction(
       state.regSecretAccessKey =
         createRegularClientResponse.AccessKey.SecretAccessKey;
       console.log(
-        `S3 client created using the regular user access key: ${state.regAccessKeyId}
-        and the regular use secret access key: ${state.regSecretAccessKey}`,
+        `S3 client created using the regular user access key: ${state.regAccessKeyId} and the regular use secret access key: ${state.regSecretAccessKey}`,
       );
     } catch (err) {
       console.log("Error", err);
@@ -239,8 +238,7 @@ const sdkGetCredentials = new ScenarioAction(
         createExpressClientResponse.AccessKey.SecretAccessKey;
 
       console.log(
-        `S3 client created using the Express user access key: ${state.expAccessKeyId}
-        and the Express user secret access key: ${state.expSecretAccessKey}`,
+        `S3 client created using the Express user access key: ${state.expAccessKeyId} and the Express user secret access key: ${state.expSecretAccessKey}`,
       );
     } catch {
       console.log("Error");
@@ -285,7 +283,7 @@ const sdkCreateS3Buckets = new ScenarioAction(
     try {
       // Optionally edit the default key name prefix of the copied object in ./names.json.
       const expBucketNamePrefix = data.names.expbucketname;
-      const expBucket = "express-bucket";
+      const expBucket = "directory-bucket";
       state.directoryBucketName = `${expBucketNamePrefix}${expBucket}`;
 
       const createDirectoryBucket = await s3Client.send(
@@ -303,7 +301,7 @@ const sdkCreateS3Buckets = new ScenarioAction(
           },
         }),
       );
-      state.expressBucketLocation = createDirectoryBucket.Location;
+      state.directoryBucketLocation = createDirectoryBucket.Location;
 
       console.log(
         `Bucket ${state.directoryBucketName} created at ${createDirectoryBucket.Location}`,
@@ -364,7 +362,7 @@ const sdkCreateAndCopyObject = new ScenarioAction(
       const copyObjectToExpressBucket = await s3Client.send(
         new CopyObjectCommand({
           CopySource: copySource,
-          Bucket: `${state.expressBucketName}`,
+          Bucket: `${state.directoryBucketName}`,
           Key: copiedKey,
           credentials: {
             accessKeyId: `${state.expAccessKeyId}`,
@@ -374,7 +372,7 @@ const sdkCreateAndCopyObject = new ScenarioAction(
       );
       state.objectNameInExpressBucket = `${keyNamePrefix}${keyName}`;
       console.log(
-        `Copied ${keyNamePrefix}${keyName} from ${state.regularBucketName} to ${state.expressBucketName}.`,
+        `Copied ${keyNamePrefix}${keyName} from ${state.regularBucketName} to ${state.directoryBucketName}.`,
       );
     } catch (err) {
       console.log("Error ", err);
@@ -420,7 +418,7 @@ const sdkGetObjectfromBothBuckets = new ScenarioAction(
         const downloadTimeDirBucket = startTimeExpBucket - endTimeExpBucket;
         state.downloadTimefromDirectoryBucket = downloadTimeDirBucket;
         console.log(
-          `The download time from the express bucket was ${state.downloadTimefromDirectoryBucket} milliseconds`,
+          `The download time from the directory bucket was ${state.downloadTimefromDirectoryBucket} milliseconds`,
         );
       }
       runExpressLoop();
@@ -513,9 +511,9 @@ const myScenario = new Scenario(
     regSecretAccessKey: {},
     expSecretAccessKey: {},
     regularBucketName: {},
-    expressBucketName: {},
+    directoryBucketName: {},
     regularBucketLocation: {},
-    expressBucketLocation: {},
+    directoryBucketLocation: {},
     objectNameInRegularBucket: {},
     objectNameInExpressBucket: {},
     downloadTimefromRegularBucket: {},
