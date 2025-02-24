@@ -425,42 +425,6 @@ const sdkGetObjectfromBothBuckets = new ScenarioAction(
   "sdkGetObjectfromBothBuckets",
   async (/** @type {State} */ state) => {
     try {
-      async function runRegularLoop() {
-        await getObjectfromRegularBucket1000();
-      }
-
-      async function getObjectfromRegularBucket() {
-        const command = new GetObjectCommand({
-          Bucket: `${state.regularBucketName}`,
-          Key: `${state.objectNameInRegularBucket}`,
-          credentials: {
-            accessKeyId: `${state.regAccessKeyId}`,
-            secretAccessKey: `${state.regSecretAccessKey}`,
-          },
-        });
-        const response = await s3Client.send(command);
-      }
-
-      async function getObjectfromRegularBucket1000() {
-        const startTimeRegBucket = Date.now();
-        console.log("startTimeRegBucket", startTimeRegBucket);
-        for (let i = 0; i < 1000; i++) {
-          getObjectfromRegularBucket();
-        }
-        const endTimeRegBucket = Date.now();
-        console.log("endTimeRegBucket", endTimeRegBucket);
-
-        const downloadTimeRegBucket = endTimeRegBucket - startTimeRegBucket;
-        state.downloadTimefromRegularBucket = downloadTimeRegBucket;
-        console.log(
-          `The download time from the regular bucket was ${state.downloadTimefromRegularBucket} milliseconds.`,
-        );
-      }
-      runRegularLoop();
-    } catch (err) {
-      console.log("error in loop", err);
-    }
-    try {
       async function runExpressLoop() {
         await getObjectfromExpressBucket1000();
       }
@@ -493,12 +457,48 @@ const sdkGetObjectfromBothBuckets = new ScenarioAction(
         );
       }
       runExpressLoop();
+    } catch (err) {
+      console.log("error in express loop", err);
+    }
+    try {
+      async function runRegularLoop() {
+        await getObjectfromRegularBucket1000();
+      }
+
+      async function getObjectfromRegularBucket() {
+        const command = new GetObjectCommand({
+          Bucket: `${state.regularBucketName}`,
+          Key: `${state.objectNameInRegularBucket}`,
+          credentials: {
+            accessKeyId: `${state.regAccessKeyId}`,
+            secretAccessKey: `${state.regSecretAccessKey}`,
+          },
+        });
+        const response = await s3Client.send(command);
+      }
+
+      async function getObjectfromRegularBucket1000() {
+        const startTimeRegBucket = Date.now();
+        console.log("startTimeRegBucket", startTimeRegBucket);
+        for (let i = 0; i < 1000; i++) {
+          getObjectfromRegularBucket();
+        }
+        const endTimeRegBucket = Date.now();
+        console.log("endTimeRegBucket", endTimeRegBucket);
+
+        const downloadTimeRegBucket = endTimeRegBucket - startTimeRegBucket;
+        state.downloadTimefromRegularBucket = downloadTimeRegBucket;
+        console.log(
+          `The download time from the regular bucket was ${state.downloadTimefromRegularBucket} milliseconds.`,
+        );
+      }
+      runRegularLoop();
       const timedifference =
         state.downloadTimefromDirectoryBucket -
         state.downloadTimefromRegularBucket;
       console.log(`The time difference is ${timedifference} milliseconds.`);
     } catch (err) {
-      console.log("error in express loop", err);
+      console.log("error in loop", err);
     }
   },
 );
