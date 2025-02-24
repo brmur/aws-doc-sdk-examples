@@ -449,6 +449,7 @@ const sdkGetObjectfromBothBuckets = new ScenarioAction(
           getObjectfromExpressBucket();
         }
         const endTimeExpBucket = Date.now();
+        console.log("endTimeExpBucket", endTimeExpBucket);
         const downloadTimeDirBucket = endTimeExpBucket - startTimeExpBucket;
         state.downloadTimefromDirectoryBucket = downloadTimeDirBucket;
         console.log(
@@ -483,6 +484,8 @@ const sdkGetObjectfromBothBuckets = new ScenarioAction(
           getObjectfromRegularBucket();
         }
         const endTimeRegBucket = Date.now();
+        console.log("endTimeRegBucket", endTimeRegBucket);
+
         const downloadTimeRegBucket = endTimeRegBucket - startTimeRegBucket;
         state.downloadTimefromRegularBucket = downloadTimeRegBucket;
         console.log(
