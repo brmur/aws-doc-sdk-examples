@@ -461,15 +461,6 @@ const sdkGetObjectfromBothBuckets = new ScenarioAction(
       console.log("error in loop", err);
     }
     try {
-      const s3ClientSession = new S3Client({
-        credentials: {
-          accessKeyId: state.sessionAccessKey,
-          secretAccessKey: state.sessionSecretAccessKey,
-          sessionToken: state.sessionToken,
-        },
-        region: region,
-      });
-
       async function runExpressLoop() {
         await getObjectfromExpressBucket1000();
       }
@@ -478,8 +469,13 @@ const sdkGetObjectfromBothBuckets = new ScenarioAction(
         const command = new GetObjectCommand({
           Bucket: `${state.directoryBucketName}`,
           Key: `${state.objectNameInExpressBucket}`,
+          credentials: {
+            accessKeyId: state.sessionAccessKey,
+            secretAccessKey: state.sessionSecretAccessKey,
+            sessionToken: state.sessionToken,
+          },
         });
-        const response = await s3ClientSession.send(command);
+        const response = await s3Client.send(command);
       }
 
       async function getObjectfromExpressBucket1000() {
