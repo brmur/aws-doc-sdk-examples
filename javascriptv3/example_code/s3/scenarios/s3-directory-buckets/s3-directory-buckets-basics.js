@@ -424,46 +424,6 @@ const displayGetObjectfromBothBuckets = new ScenarioOutput(
 const sdkGetObjectfromBothBuckets = new ScenarioAction(
   "sdkGetObjectfromBothBuckets",
   async (/** @type {State} */ state) => {
-    const s3ClientSession = new S3Client({
-      credentials: {
-        accessKeyId: state.sessionAccessKey,
-        secretAccessKey: state.sessionSecretAccessKey,
-        sessionToken: state.sessionToken,
-      },
-      region: region,
-    });
-
-    try {
-      async function runExpressLoop() {
-        await getObjectfromExpressBucket1000();
-      }
-
-      async function getObjectfromExpressBucket() {
-        const command = new GetObjectCommand({
-          Bucket: `${state.directoryBucketName}`,
-          Key: `${state.objectNameInExpressBucket}`,
-        });
-        const response = await s3ClientSession.send(command);
-      }
-
-      async function getObjectfromExpressBucket1000() {
-        const startTimeExpBucket = Date.now();
-        console.log("startTimeExpBucket", startTimeExpBucket);
-        for (let i = 0; i < 1000; i++) {
-          getObjectfromExpressBucket();
-        }
-        const endTimeExpBucket = Date.now();
-        console.log("endTimeExpBucket", endTimeExpBucket);
-        const downloadTimeDirBucket = endTimeExpBucket - startTimeExpBucket;
-        state.downloadTimefromDirectoryBucket = downloadTimeDirBucket;
-        console.log(
-          `The download time from the directory bucket was ${state.downloadTimefromDirectoryBucket} milliseconds`,
-        );
-      }
-      runExpressLoop();
-    } catch (err) {
-      console.log("error in express loop", err);
-    }
     try {
       async function runRegularLoop() {
         await getObjectfromRegularBucket1000();
@@ -495,21 +455,61 @@ const sdkGetObjectfromBothBuckets = new ScenarioAction(
         console.log(
           `The download time from the regular bucket was ${state.downloadTimefromRegularBucket} milliseconds.`,
         );
-        const timedifference =
-          state.downloadTimefromDirectoryBucket -
-          state.downloadTimefromRegularBucket;
-        console.log(`The time difference is ${timedifference} milliseconds.`);
       }
       runRegularLoop();
     } catch (err) {
       console.log("error in loop", err);
+    }
+    try {
+      const s3ClientSession = new S3Client({
+        credentials: {
+          accessKeyId: state.sessionAccessKey,
+          secretAccessKey: state.sessionSecretAccessKey,
+          sessionToken: state.sessionToken,
+        },
+        region: region,
+      });
+
+      async function runExpressLoop() {
+        await getObjectfromExpressBucket1000();
+      }
+
+      async function getObjectfromExpressBucket() {
+        const command = new GetObjectCommand({
+          Bucket: `${state.directoryBucketName}`,
+          Key: `${state.objectNameInExpressBucket}`,
+        });
+        const response = await s3ClientSession.send(command);
+      }
+
+      async function getObjectfromExpressBucket1000() {
+        const startTimeExpBucket = Date.now();
+        console.log("startTimeExpBucket", startTimeExpBucket);
+        for (let i = 0; i < 1000; i++) {
+          getObjectfromExpressBucket();
+        }
+        const endTimeExpBucket = Date.now();
+        console.log("endTimeExpBucket", endTimeExpBucket);
+        const downloadTimeDirBucket = endTimeExpBucket - startTimeExpBucket;
+        state.downloadTimefromDirectoryBucket = downloadTimeDirBucket;
+        console.log(
+          `The download time from the directory bucket was ${state.downloadTimefromDirectoryBucket} milliseconds`,
+        );
+      }
+      runExpressLoop();
+      const timedifference =
+        state.downloadTimefromDirectoryBucket -
+        state.downloadTimefromRegularBucket;
+      console.log(`The time difference is ${timedifference} milliseconds.`);
+    } catch (err) {
+      console.log("error in express loop", err);
     }
   },
 );
 
 const goodbye = new ScenarioOutput(
   "goodbye",
-  "This concludes the IoT Sitewise Basics scenario for the AWS Javascript SDK v3. Thank you!",
+  "This concludes the S3 Express Basics scenario for the AWS Javascript SDK v3. Thank you!",
 );
 
 const myScenario = new Scenario(
