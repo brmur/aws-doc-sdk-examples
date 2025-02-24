@@ -45,7 +45,7 @@ const __filename = fileURLToPath(import.meta.url);
 const __dirname = dirname(__filename);
 const stackName = "s3DirectoryBucketsBasicsStack";
 const region = "us-east-1";
-
+const zone_id = "use1-az6";
 import data from "./names.json" with { type: "json" };
 const s3Client = new S3Client({});
 
@@ -284,16 +284,20 @@ const sdkCreateS3Buckets = new ScenarioAction(
     try {
       // Optionally edit the default key name prefix of the copied object in ./names.json.
       const expBucketNamePrefix = data.names.expbucketname;
-      const expBucket = "directory-bucket";
-      state.directoryBucketName = `${expBucketNamePrefix}${expBucket}`;
+      const suffix = `${zone_id}--x-s3`;
+      const s3 = new S3Client({
+        region,
+      });
+      state.directoryBucketName = `${expBucketNamePrefix}${suffix}`;
 
-      const createDirectoryBucket = await s3Client.send(
+      const createDirectoryBucket = await s3.send(
         new CreateBucketCommand({
-          Bucket: `${state.directoryBucketName}`,
+          Bucket: state.directoryBucketName,
           CreateBucketConfiguration: {
+            Location: { Type: "AvailabilityZone", Name: zone_id },
             Bucket: {
-              DataRedundancy: "SingleAvailabilityZone",
               Type: "Directory",
+              DataRedundancy: "SingleAvailabilityZone",
             },
           },
           credentials: {
@@ -302,6 +306,7 @@ const sdkCreateS3Buckets = new ScenarioAction(
           },
         }),
       );
+
       state.directoryBucketLocation = createDirectoryBucket.Location;
 
       console.log(
@@ -341,13 +346,26 @@ const sdkCreateAndCopyObject = new ScenarioAction(
       const createSession = await s3Client.send(
         new CreateSessionCommand({
           Bucket: `${state.directoryBucketName}`,
+          region: region,
           credentials: {
-            accessKeyId: `${state.regAccessKeyId}`,
-            secretAccessKey: `${state.regSecretAccessKey}`,
+            accessKeyId: `${state.expAccessKeyId}`,
+            secretAccessKey: `${state.expSecretAccessKey}`,
           },
         }),
       );
-      console.log("createSession ", createSession);
+      console.log(
+        "Session access key: ",
+        createSession.Credentials.AccessKeyId,
+      );
+      console.log(
+        "Session secret access key: ",
+        createSession.Credentials.SecretAccessKey,
+      );
+      console.log("Session token: ", createSession.Credentials.SessionToken);
+
+      state.sessionAccessKey = createSession.Credentials.AccessKeyId;
+      state.sessionSecretAccessKey = createSession.Credentials.SecretAccessKey;
+      state.sessionToken = createSession.Credentials.SessionToken;
     } catch (err) {
       console.log("Error ", err);
     }
@@ -416,8 +434,9 @@ const sdkGetObjectfromBothBuckets = new ScenarioAction(
           Bucket: `${state.directoryBucketName}`,
           Key: `${state.objectNameInExpressBucket}`,
           credentials: {
-            accessKeyId: `${state.expAccessKeyId}`,
-            secretAccessKey: `${state.expSecretAccessKey}`,
+            accessKeyId: `${state.sessionAccessKey}`,
+            secretAccessKey: `${state.sessionSecretAccessKey}`,
+            secretToken: `${state.sessionSecretAccessKey}`,
           },
         });
         const response = await s3Client.send(command);
@@ -531,6 +550,9 @@ const myScenario = new Scenario(
     directoryBucketLocation: {},
     objectNameInRegularBucket: {},
     objectNameInExpressBucket: {},
+    sessionAccessKey: {},
+    sessionSecretAccessKey: {},
+    sessionToken: {},
     downloadTimefromRegularBucket: {},
     downloadTimefromDirectoryBucket: {},
   },
