@@ -436,7 +436,7 @@ const sdkGetObjectfromBothBuckets = new ScenarioAction(
           credentials: {
             accessKeyId: `${state.sessionAccessKey}`,
             secretAccessKey: `${state.sessionSecretAccessKey}`,
-            secretToken: `${state.sessionSecretAccessKey}`,
+            secretToken: `${state.sessionToken}`,
           },
         });
         const response = await s3Client.send(command);
