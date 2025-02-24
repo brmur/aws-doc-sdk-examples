@@ -424,6 +424,15 @@ const displayGetObjectfromBothBuckets = new ScenarioOutput(
 const sdkGetObjectfromBothBuckets = new ScenarioAction(
   "sdkGetObjectfromBothBuckets",
   async (/** @type {State} */ state) => {
+    const s3ClientSession = new S3Client({
+      credentials: {
+        accessKeyId: state.sessionAccessKey,
+        secretAccessKey: state.sessionSecretAccessKey,
+        sessionToken: state.sessionToken,
+      },
+      region: region,
+    });
+
     try {
       async function runExpressLoop() {
         await getObjectfromExpressBucket1000();
@@ -433,13 +442,8 @@ const sdkGetObjectfromBothBuckets = new ScenarioAction(
         const command = new GetObjectCommand({
           Bucket: `${state.directoryBucketName}`,
           Key: `${state.objectNameInExpressBucket}`,
-          credentials: {
-            accessKeyId: `${state.sessionAccessKey}`,
-            secretAccessKey: `${state.sessionSecretAccessKey}`,
-            secretToken: `${state.sessionToken}`,
-          },
         });
-        const response = await s3Client.send(command);
+        const response = await s3ClientSession.send(command);
       }
 
       async function getObjectfromExpressBucket1000() {
