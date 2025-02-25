@@ -402,8 +402,9 @@ const sdkCreateAndCopyObject = new ScenarioAction(
           Bucket: `${state.directoryBucketName}`,
           Key: copiedKey,
           credentials: {
-            accessKeyId: `${state.expAccessKeyId}`,
-            secretAccessKey: `${state.expSecretAccessKey}`,
+            accessKeyId: `${state.sessionAccessKeyId}`,
+            secretAccessKey: `${state.sessionSecretAccessKey}`,
+            sessionToken: state.sessionToken,
             region: region,
           },
         }),
