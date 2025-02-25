@@ -434,8 +434,8 @@ const sdkGetObjectfromBothBuckets = new ScenarioAction(
           Bucket: `${state.directoryBucketName}`,
           Key: `${state.objectNameInExpressBucket}`,
           credentials: {
-            accessKeyId: state.sessionAccessKey,
-            secretAccessKey: state.sessionSecretAccessKey,
+            accessKeyId: `${state.expAccessKeyId}`,
+            secretAccessKey: `${state.expSecretAccessKey}`,
             sessionToken: state.sessionToken,
           },
         });
