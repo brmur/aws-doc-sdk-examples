@@ -45,7 +45,7 @@ const __filename = fileURLToPath(import.meta.url);
 const __dirname = dirname(__filename);
 const stackName = "s3DirectoryBucketsBasicsStack";
 const region = "us-east-1";
-const zone_id = "use1-az6";
+const zone_id = "use1-az4";
 import data from "./names.json" with { type: "json" };
 const s3Client = new S3Client({});
 
