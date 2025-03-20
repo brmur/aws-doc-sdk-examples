@@ -435,18 +435,27 @@ const sdkGetObjectfromBothBuckets = new ScenarioAction(
         await getObjectfromExpressBucket1000();
       }
 
+      const expS3Client = new S3Client({
+        region: region,
+        credentials: {
+          accessKeyId: `${state.expAccessKeyId}`,
+          secretAccessKey: `${state.expSecretAccessKey}`,
+        },
+      });
+
+      /*        const sessionS3Client = new S3Client({
+  region: region,
+  credentials: {
+            accessKeyId: `${state.sessionAccessKeyId}`,
+            secretAccessKey: `${state.sessionSecretAccessKey}`,
+  }})*/
+
       async function getObjectfromExpressBucket() {
         const command = new GetObjectCommand({
           Bucket: `${state.directoryBucketName}`,
           Key: `${state.objectNameInExpressBucket}`,
-          credentials: {
-            accessKeyId: `${state.sessionAccessKeyId}`,
-            secretAccessKey: `${state.sessionSecretAccessKey}`,
-            sessionToken: state.sessionToken,
-            region: region,
-          },
         });
-        const response = await s3Client.send(command);
+        const response = await expS3Client.send(command);
       }
 
       async function getObjectfromExpressBucket1000() {
@@ -471,18 +480,19 @@ const sdkGetObjectfromBothBuckets = new ScenarioAction(
       async function runRegularLoop() {
         await getObjectfromRegularBucket1000();
       }
-
+      const regS3Client = new S3Client({
+        region: region,
+        credentials: {
+          accessKeyId: `${state.regAccessKeyId}`,
+          secretAccessKey: `${state.regSecretAccessKey}`,
+        },
+      });
       async function getObjectfromRegularBucket() {
         const command = new GetObjectCommand({
           Bucket: `${state.regularBucketName}`,
           Key: `${state.objectNameInRegularBucket}`,
-          credentials: {
-            accessKeyId: `${state.regAccessKeyId}`,
-            secretAccessKey: `${state.regSecretAccessKey}`,
-            region: region,
-          },
         });
-        const response = await s3Client.send(command);
+        const response = await regS3Client.send(command);
       }
 
       async function getObjectfromRegularBucket1000() {
