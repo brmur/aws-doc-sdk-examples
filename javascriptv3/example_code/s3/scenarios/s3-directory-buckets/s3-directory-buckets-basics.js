@@ -261,7 +261,7 @@ const sdkCreateS3Buckets = new ScenarioAction(
     try {
       // Optionally edit the default key name prefix of the copied object in ./names.json.
       const regBucketNamePrefix = data.names.regbucketname;
-      const regBucket = "regular-bucket";
+      const regBucket = "amzn-s3-demo-bucket";
       state.regularBucketName = `${regBucketNamePrefix}${regBucket}`;
 
       const createBucketWithRegularCreds = await s3Client.send(
@@ -452,7 +452,7 @@ const sdkGetObjectfromBothBuckets = new ScenarioAction(
       async function getObjectfromExpressBucket1000() {
         const startTimeExpBucket = Date.now();
         console.log("startTimeExpBucket", startTimeExpBucket);
-        for (let i = 0; i < 1; i++) {
+        for (let i = 0; i < 1000; i++) {
           getObjectfromExpressBucket();
         }
         const endTimeExpBucket = Date.now();
@@ -488,7 +488,7 @@ const sdkGetObjectfromBothBuckets = new ScenarioAction(
       async function getObjectfromRegularBucket1000() {
         const startTimeRegBucket = Date.now();
         console.log("startTimeRegBucket", startTimeRegBucket);
-        for (let i = 0; i < 1; i++) {
+        for (let i = 0; i < 1000; i++) {
           getObjectfromRegularBucket();
         }
         const endTimeRegBucket = Date.now();
