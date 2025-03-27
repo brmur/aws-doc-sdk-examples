@@ -40,12 +40,13 @@ import { readFileSync } from "node:fs";
 import { fileURLToPath } from "node:url";
 import { readFile } from "node:fs/promises";
 import { dirname } from "node:path";
+import { randomUUID } from "node:crypto";
 
 const __filename = fileURLToPath(import.meta.url);
 const __dirname = dirname(__filename);
 const stackName = "s3DirectoryBucketsBasicsStack";
-const region = "us-east-1";
-const zone_id = "use1-az4";
+const region = "us-west-2";
+const zone_id = "usw2-az1";
 import data from "./names.json" with { type: "json" };
 const s3Client = new S3Client({ region: region });
 
@@ -402,7 +403,7 @@ const sdkCreateAndCopyObject = new ScenarioAction(
           Bucket: `${state.directoryBucketName}`,
           Key: copiedKey,
           credentials: {
-            accessKeyId: `${state.sessionAccessKeyId}`,
+            accessKeyId: `${state.sessionAccessKey}`,
             secretAccessKey: `${state.sessionSecretAccessKey}`,
             sessionToken: state.sessionToken,
             region: region,
@@ -443,26 +444,42 @@ const sdkGetObjectfromBothBuckets = new ScenarioAction(
         },
       });
 
-      /*        const sessionS3Client = new S3Client({
-  region: region,
-  credentials: {
-            accessKeyId: `${state.sessionAccessKeyId}`,
-            secretAccessKey: `${state.sessionSecretAccessKey}`,
-  }})*/
+      const sessionS3Client = new S3Client({
+        region: region,
+        credentials: {
+          accessKeyId: `${state.sessionAccessKey}`,
+          secretAccessKey: `${state.sessionSecretAccessKey}`,
+          sessionToken: state.sessionToken,
+        },
+      });
 
       async function getObjectfromExpressBucket() {
         const command = new GetObjectCommand({
           Bucket: `${state.directoryBucketName}`,
           Key: `${state.objectNameInExpressBucket}`,
         });
+        // const response = await sessionS3Client.send(command);
         const response = await expS3Client.send(command);
+        const bodyStream = response.Body;
+        const bodyString = await bodyStream.transformToString();
       }
 
       async function getObjectfromExpressBucket1000() {
         const startTimeExpBucket = Date.now();
+        const createSession = await expS3Client.send(
+          new CreateSessionCommand({
+            Bucket: `${state.directoryBucketName}`,
+            region: region,
+            credentials: {
+              accessKeyId: `${state.expAccessKeyId}`,
+              secretAccessKey: `${state.expSecretAccessKey}`,
+              region: region,
+            },
+          }),
+        );
         console.log("startTimeExpBucket", startTimeExpBucket);
-        for (let i = 0; i < 1000; i++) {
-          getObjectfromExpressBucket();
+        for (let i = 0; i < 1000; ++i) {
+          await getObjectfromExpressBucket();
         }
         const endTimeExpBucket = Date.now();
         console.log("endTimeExpBucket", endTimeExpBucket);
@@ -472,7 +489,7 @@ const sdkGetObjectfromBothBuckets = new ScenarioAction(
           `The download time from the directory bucket was ${state.downloadTimefromDirectoryBucket} milliseconds`,
         );
       }
-      runExpressLoop();
+      await runExpressLoop();
     } catch (err) {
       console.log("error in express loop", err);
     }
@@ -493,13 +510,15 @@ const sdkGetObjectfromBothBuckets = new ScenarioAction(
           Key: `${state.objectNameInRegularBucket}`,
         });
         const response = await regS3Client.send(command);
+        const bodyStream = response.Body;
+        const bodyString = await bodyStream.transformToString();
       }
 
       async function getObjectfromRegularBucket1000() {
         const startTimeRegBucket = Date.now();
         console.log("startTimeRegBucket", startTimeRegBucket);
-        for (let i = 0; i < 1000; i++) {
-          getObjectfromRegularBucket();
+        for (let i = 0; i < 1000; ++i) {
+          await getObjectfromRegularBucket();
         }
         const endTimeRegBucket = Date.now();
         console.log("endTimeRegBucket", endTimeRegBucket);
@@ -510,7 +529,7 @@ const sdkGetObjectfromBothBuckets = new ScenarioAction(
           `The download time from the regular bucket was ${state.downloadTimefromRegularBucket} milliseconds.`,
         );
       }
-      runRegularLoop();
+      await runRegularLoop();
       const timedifference =
         state.downloadTimefromDirectoryBucket -
         state.downloadTimefromRegularBucket;
