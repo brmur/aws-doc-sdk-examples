@@ -3,6 +3,8 @@
 
 package com.example.novareel;
 
+// snippet-start:[bedrock-runtime.java2.NovaReel.VideoGeneration]
+
 import org.springframework.stereotype.Service;
 import software.amazon.awssdk.auth.credentials.ProfileCredentialsProvider;
 import software.amazon.awssdk.core.document.Document;
@@ -11,6 +13,8 @@ import software.amazon.awssdk.services.bedrockruntime.BedrockRuntimeAsyncClient;
 import software.amazon.awssdk.services.bedrockruntime.model.*;
 
 import java.util.concurrent.CompletableFuture;
+
+
 
 @Service
 public class VideoGenerationService {
@@ -103,3 +107,4 @@ public class VideoGenerationService {
     }
 
 }
+// snippet-end:[bedrock-runtime.java2.NovaReel.VideoGeneration]
