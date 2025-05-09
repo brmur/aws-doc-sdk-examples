@@ -14,10 +14,10 @@ bedrock_prompt_logical_coherence:
               snippet_files:
                 - resources/prompts/amazon_nova_pro/faithfulness.txt
             - description: >-
-                <emphasis role="bold">Score mapping:</emphasis></para>
+                Score mapping:</para>
                 <itemizedlist>
                     <listitem>
-                        <para>Sending a text message.</para>
+                        <para><emphasis role="bold">Sending a text message.</emphasis></para>
                     </listitem>
                     <listitem>
                         <para>Receiving messages synchronously.</para>
