@@ -32,9 +32,6 @@ bedrock_prompt_logical_coherence:
                         <para><emphasis role="bold">all is faithful</emphasis>: 4</para>
                     </listitem>
                 </itemizedlist>
-                <para>For more information on using JMS with &SQS;, see the 
-                <ulink type="documentation" url="AWSSimpleQueueService/latest/SQSDeveloperGuide/sqs-java-message-service-jms-client.html">&SQS; Developer Guide</ulink>.
-                </para><para>Sending a text message.
               snippet_tags:
                 - javascript.v3.dynamodb.hello
   services:
