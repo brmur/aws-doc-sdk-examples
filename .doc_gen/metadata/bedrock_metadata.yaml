@@ -33,7 +33,7 @@ bedrock_prompt_logical_coherence:
                     </listitem>
                 </itemizedlist>
               snippet_tags:
-                - Bedrock.dotnetv3.BedrockActions.HelloBedroc
+                - Bedrock.dotnetv3.BedrockActions.HelloBedrock
   services:
     bedrock: {}
 bedrock_prompt_faithfulness:
@@ -70,7 +70,7 @@ bedrock_prompt_faithfulness:
                     </listitem>
                 </itemizedlist>
               snippet_tags:
-                - Bedrock.dotnetv3.BedrockActions.HelloBedroc
+                - Bedrock.dotnetv3.BedrockActions.HelloBedrock
   services:
     bedrock: {}
 bedrock_Hello:
