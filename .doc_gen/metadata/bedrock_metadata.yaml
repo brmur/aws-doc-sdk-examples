@@ -1,4 +1,20 @@
 # zexi 0.4.0
+bedrock_prompt_logical_coherence:
+  title: Logical coherence prompts;
+  title_abbrev: Logical coherence prompts;
+  synopsis: Logical coherence prompts using &BR;.
+  category: Prompts
+  languages:
+    Java:
+      versions:
+        - sdk_version: 2
+          github: resources/prompts/amazon_nova_pro
+          excerpts:
+            - description: Faithfulness – Looks at whether the response contains information not found in the prompt, that cannot be inferred easily from the prompt. Responses are graded a 5-point Likert scale, and then normalized in the output and the job's report card. The {{prompt}} will contain the prompt sent to the generator from your dataset, and the {{prediction}} is the generator model's responses.
+              snippet_files:
+                - resources/prompts/amazon_nova_pro/faithfulness.txt
+  services:
+    bedrock: {}
 bedrock_Hello:
   title: Hello &BR;
   title_abbrev: Hello &BR;
