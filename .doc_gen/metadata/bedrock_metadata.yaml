@@ -36,7 +36,7 @@ bedrock_prompt_logical_coherence:
                 - Bedrock.dotnetv3.BedrockActions.HelloBedroc
   services:
     bedrock: {}
-bedrock_prompt_logical_coherence:
+bedrock_prompt_faithfulness:
   title: Faithfulness prompt;
   title_abbrev: Faithfulness prompt;
   synopsis: Faithfulness prompt using &BR;.
