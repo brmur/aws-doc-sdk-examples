@@ -14,7 +14,7 @@ bedrock_prompt_logical_coherence:
               snippet_files:
                 - resources/prompts/amazon_nova_pro/faithfulness.txt
             - description: >-
-                The following examples work with standard &SQS; queues and include:</para>
+                <emphasis role="bold">Score mapping:</emphasis></para>
                 <itemizedlist>
                     <listitem>
                         <para>Sending a text message.</para>
