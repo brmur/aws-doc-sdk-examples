@@ -10,7 +10,7 @@ bedrock_prompt_logical_coherence:
         - sdk_version: 2
           github: resources/prompts/amazon_nova_pro
           excerpts:
-            - description: <emphasis>Faithfulness</emphasis> – Looks at whether the response contains information not found in the prompt, that cannot be inferred easily from the prompt. Responses are graded a 5-point Likert scale, and then normalized in the output and the job's report card. The <emphasis <emphasis role="code">{{prompt}}</emphasis> will contain the prompt sent to the generator from your dataset, and the <emphasis role="code">{{prediction}}</emphasis> is the generator model's responses.
+            - description: Faithfulness</emphasis> – Looks at whether the response contains information not found in the prompt, that cannot be inferred easily from the prompt. Responses are graded a 5-point Likert scale, and then normalized in the output and the job's report card. The <emphasis <emphasis role="code">{{prompt}}</emphasis> will contain the prompt sent to the generator from your dataset, and the <emphasis role="code">{{prediction}}</emphasis> is the generator model's responses.
               snippet_files:
                 - resources/prompts/amazon_nova_pro/faithfulness.txt
             - description: >-
