@@ -32,6 +32,7 @@ bedrock_prompt_logical_coherence:
                         <para><emphasis role="bold">all is faithful</emphasis>: 4</para>
                     </listitem>
                 </itemizedlist>
+                <para>.
               snippet_tags:
                 - javascript.v3.dynamodb.hello
   services:
