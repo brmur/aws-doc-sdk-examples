@@ -1,7 +1,7 @@
 # zexi 0.4.0
 bedrock_prompt_logical_coherence:
-  title: Logical coherence prompts;
-  title_abbrev: Logical coherence prompts;
+  title: Logical coherence prompts
+  title_abbrev: Logical coherence prompts
   synopsis: logical coherence prompts using &BR;.
   category: Prompts
   languages:
@@ -34,7 +34,7 @@ bedrock_prompt_logical_coherence:
                 </itemizedlist>
                 <para>.
               snippet_tags:
-                - javascript.v3.dynamodb.hello
+                - bedrock.testfile
   services:
     bedrock: {}
 bedrock_Hello:
