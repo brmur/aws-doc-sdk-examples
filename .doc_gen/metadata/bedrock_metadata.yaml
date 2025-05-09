@@ -17,25 +17,19 @@ bedrock_prompt_logical_coherence:
                 Score mapping:</para>
                 <itemizedlist>
                     <listitem>
-                        <para><emphasis role="bold">Sending a text message.</emphasis></para>
+                        <para><emphasis role="bold">none is faithful</emphasis>: 0</para>
                     </listitem>
                     <listitem>
-                        <para>Receiving messages synchronously.</para>
+                        <para><emphasis role="bold">some is faithful</emphasis>: 1</para>
                     </listitem>
                     <listitem>
-                        <para>Receiving messages asynchronously.</para>
+                        <para><emphasis role="bold">approximately half is faithful</emphasis>: 2</para>
                     </listitem>
                     <listitem>
-                        <para>Receiving messages using CLIENT_ACKNOWLEDGE mode.</para>
+                        <para><emphasis role="bold">most is faithful</emphasis>: 3</para>
                     </listitem>
                     <listitem>
-                        <para>Receiving messages using the UNORDERED_ACKNOWLEDGE mode.</para>
-                    </listitem>
-                    <listitem>
-                        <para>Using Spring to inject dependencies.</para>
-                    </listitem>
-                    <listitem>
-                        <para>A utility class that provides common methods used by the other examples.</para>
+                        <para><emphasis role="bold">all is faithful</emphasis>: 4</para>
                     </listitem>
                 </itemizedlist>
                 <para>For more information on using JMS with &SQS;, see the 
