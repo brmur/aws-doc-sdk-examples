@@ -14,8 +14,33 @@ bedrock_prompt_logical_coherence:
               snippet_files:
                 - resources/prompts/amazon_nova_pro/faithfulness.txt
             - description: >-
-                For more details on working with &DDB; in &JSBlong;, 
-                see <ulink url="https://docs.aws.amazon.com/amazondynamodb/latest/developerguide/programming-with-javascript.html">Programming &DDB; with JavaScript</ulink>.
+The following examples work with standard &SQS; queues and include:</para>
+                <itemizedlist>
+                    <listitem>
+                        <para>Sending a text message.</para>
+                    </listitem>
+                    <listitem>
+                        <para>Receiving messages synchronously.</para>
+                    </listitem>
+                    <listitem>
+                        <para>Receiving messages asynchronously.</para>
+                    </listitem>
+                    <listitem>
+                        <para>Receiving messages using CLIENT_ACKNOWLEDGE mode.</para>
+                    </listitem>
+                    <listitem>
+                        <para>Receiving messages using the UNORDERED_ACKNOWLEDGE mode.</para>
+                    </listitem>
+                    <listitem>
+                        <para>Using Spring to inject dependencies.</para>
+                    </listitem>
+                    <listitem>
+                        <para>A utility class that provides common methods used by the other examples.</para>
+                    </listitem>
+                </itemizedlist>
+                <para>For more information on using JMS with &SQS;, see the 
+                <ulink type="documentation" url="AWSSimpleQueueService/latest/SQSDeveloperGuide/sqs-java-message-service-jms-client.html">&SQS; Developer Guide</ulink>.
+                </para><para>Sending a text message.
               snippet_tags:
                 - javascript.v3.dynamodb.hello
   services:
