@@ -2,7 +2,7 @@
 bedrock_prompt_logical_coherence:
   title: Logical coherence prompts;
   title_abbrev: Logical coherence prompts;
-  synopsis: Logical coherence prompts using &BR;.
+  synopsis: logical coherence prompts using &BR;.
   category: Prompts
   languages:
     Java:
