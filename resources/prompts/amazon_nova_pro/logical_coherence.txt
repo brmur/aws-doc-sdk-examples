@@ -1,0 +1,38 @@
+You are given a task in some context (Input), and a candidate answer. Is the candidate answer faithful to the task description and context?
+
+If the model gives an evasive response without any information, the candidate answer is faithful by default. A response is unfaithful only when (1) it clearly contradicts the context, or (2) the task implies that the response must be based on the context, like in a summarization task. If the task does not ask to respond based on the context, the model is allowed to use its own knowledge to provide a response, even if its claims are not verifiable.
+
+Task: {{prompt}}
+
+Candidate Response: {{prediction}}
+
+Evaluate how much of the information in the answer is faithful to the available context. Label an evasive response as faithful.
+
+The output should be formatted as a XML file.
+1. Output should conform to the tags below.
+2. Remember to always open and close all the tags.
+3. Do not invent new tags.
+
+As an example, for the tags ["foo", "bar", "baz"]:
+1. String "<foo>
+   <bar>
+      <baz></baz>
+   </bar>
+</foo>" is a well-formatted instance of the schema.
+2. String "<foo>
+   <bar>
+   </foo>" is a badly-formatted instance.
+3. String "<foo>
+   <tag>
+   </tag>
+</foo>" is a badly-formatted instance.
+
+Here are the output tags with description:
+```
+<response>
+  <reasoning>Justification of the Answer</reasoning>
+  <answer>Answer should be one of the following: `none is faithful`, `some is faithful`, `approximately half is faithful`, `most is faithful` or `all is faithful`</answer>
+</response>
+```
+
+Do not return any preamble or explanations, return only a pure XML string surrounded by triple backticks (```).
