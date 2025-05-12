@@ -10,26 +10,26 @@ bedrock_prompt_logical_coherence:
         - sdk_version: 2
           github: resources/prompts/amazon_nova_pro
           excerpts:
-            - description: Faithfulness – Looks at whether the response contains information not found in the prompt, that cannot be inferred easily from the prompt. Responses are graded a 5-point Likert scale, and then normalized in the output and the job's report card. The {{prompt}} will contain the prompt sent to the generator from your dataset, and the {{prediction}} is the generator model's responses.
+            - description: Logical coherence – Looks for logical gaps, inconsistencies, and contradictions in a model's responses to a prompt. Responses are graded on a 5-point Likert scale, and then normalized in the output and the job's report card. The {{prompt}} will contain the prompt sent to the generator from your dataset, and the {{prediction}} is the generator model's responses.
               snippet_files:
-                - resources/prompts/amazon_nova_pro/faithfulness.txt
+                - resources/prompts/amazon_nova_pro/logical_coherence.txt
             - description: >-
                 Score mapping:</para>
                 <itemizedlist>
                     <listitem>
-                        <para><emphasis role="bold">none is faithful</emphasis>: 0</para>
+                        <para><emphasis role="bold">Not at all</emphasis>: 0.0</para>
                     </listitem>
                     <listitem>
-                        <para><emphasis role="bold">some is faithful</emphasis>: 1</para>
+                        <para><emphasis role="bold">Not generally</emphasis>: 1.0</para>
                     </listitem>
                     <listitem>
-                        <para><emphasis role="bold">approximately half is faithful</emphasis>: 2</para>
+                        <para><emphasis role="bold">Neutral/Mixed</emphasis>: 2.0</para>
                     </listitem>
                     <listitem>
-                        <para><emphasis role="bold">most is faithful</emphasis>: 3</para>
+                        <para><emphasis role="bold">Generally yes</emphasis>: 3.0</para>
                     </listitem>
                     <listitem>
-                        <para><emphasis role="bold">all is faithful</emphasis>: 4</para>
+                        <para><emphasis role="bold">Yes</emphasis>: 4.0</para>
                     </listitem>
                 </itemizedlist>
                 <para>.
