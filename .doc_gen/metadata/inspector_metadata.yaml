@@ -1,0 +1,128 @@
+inspector_Enable:
+  title: Enable &Inspector; scanning
+  title_abbrev: Enable scanning
+  synopsis: enable &Inspector; scanning for resource types.
+  category: Actions
+  languages:
+    Python:
+      versions:
+        - sdk_version: 3
+          github: python/example_code/inspector
+          excerpts:
+            - description: Enable Inspector scanning for specified resource types.
+              snippet_tags:
+                - python.example_code.inspector.Enable
+  services:
+    inspector: {Enable}
+inspector_BatchGetAccountStatus:
+  title: Get &Inspector; account status
+  title_abbrev: Get account status
+  synopsis: get the &Inspector; status for AWS accounts.
+  category: Actions
+  languages:
+    Python:
+      versions:
+        - sdk_version: 3
+          github: python/example_code/inspector
+          excerpts:
+            - description: Get Inspector account status information.
+              snippet_tags:
+                - python.example_code.inspector.BatchGetAccountStatus
+  services:
+    inspector: {BatchGetAccountStatus}
+inspector_ListFindings:
+  title: List &Inspector; findings
+  title_abbrev: List findings
+  synopsis: list security findings from &Inspector;.
+  category: Actions
+  languages:
+    Python:
+      versions:
+        - sdk_version: 3
+          github: python/example_code/inspector
+          excerpts:
+            - description: List Inspector security findings with filtering options.
+              snippet_tags:
+                - python.example_code.inspector.ListFindings
+  services:
+    inspector: {ListFindings}
+inspector_BatchGetFindingDetails:
+  title: Get &Inspector; finding details
+  title_abbrev: Get finding details
+  synopsis: get detailed information for &Inspector; findings.
+  category: Actions
+  languages:
+    Python:
+      versions:
+        - sdk_version: 3
+          github: python/example_code/inspector
+          excerpts:
+            - description: Get detailed information for specific Inspector findings.
+              snippet_tags:
+                - python.example_code.inspector.BatchGetFindingDetails
+  services:
+    inspector: {BatchGetFindingDetails}
+inspector_ListCoverage:
+  title: List &Inspector; coverage
+  title_abbrev: List coverage
+  synopsis: list resource coverage information from &Inspector;.
+  category: Actions
+  languages:
+    Python:
+      versions:
+        - sdk_version: 3
+          github: python/example_code/inspector
+          excerpts:
+            - description: List Inspector resource coverage statistics.
+              snippet_tags:
+                - python.example_code.inspector.ListCoverage
+  services:
+    inspector: {ListCoverage}
+inspector_Disable:
+  title: Disable &Inspector; scanning
+  title_abbrev: Disable scanning
+  synopsis: disable &Inspector; scanning for resource types.
+  category: Actions
+  languages:
+    Python:
+      versions:
+        - sdk_version: 3
+          github: python/example_code/inspector
+          excerpts:
+            - description: Disable Inspector scanning for specified resource types.
+              snippet_tags:
+                - python.example_code.inspector.Disable
+  services:
+    inspector: {Disable}
+inspector_Hello:
+  title: Hello &Inspector;
+  title_abbrev: Hello &Inspector;
+  synopsis: get started using &Inspector;.
+  category: Hello
+  languages:
+    Python:
+      versions:
+        - sdk_version: 3
+          github: python/example_code/inspector
+          excerpts:
+            - description: Get started with Inspector by checking account status.
+              snippet_tags:
+                - python.example_code.inspector.Hello
+  services:
+    inspector: {BatchGetAccountStatus}
+inspector_Scenario:
+  title: Learn &Inspector; basics
+  title_abbrev: Learn the basics
+  synopsis: learn to accomplish &Inspector; tasks.
+  category: Scenarios
+  languages:
+    Python:
+      versions:
+        - sdk_version: 3
+          github: python/example_code/inspector
+          excerpts:
+            - description: Run an interactive scenario demonstrating Inspector features.
+              snippet_tags:
+                - python.example_code.inspector.Scenario
+  services:
+    inspector: {Enable, BatchGetAccountStatus, ListFindings, BatchGetFindingDetails, ListCoverage, Disable}
