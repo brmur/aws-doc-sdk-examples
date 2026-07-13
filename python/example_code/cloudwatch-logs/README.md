@@ -1,13 +1,10 @@
-# CloudWatch Logs code examples for the SDK for Python (Boto3)
+# Amazon CloudWatch Logs code examples for the SDK for Python (Boto3)
 
 ## Overview
 
 Shows how to use the AWS SDK for Python (Boto3) to work with Amazon CloudWatch Logs.
 
-<!--custom.overview.start-->
-<!--custom.overview.end-->
-
-_CloudWatch Logs monitor, store, and access your log files from Amazon Elastic Compute Cloud instances, AWS CloudTrail, or other sources._
+_Amazon CloudWatch Logs enables you to centralize the logs from all of your systems, applications, and AWS services that you use, in a single, highly scalable service._
 
 ## ⚠ Important
 
@@ -15,9 +12,6 @@ _CloudWatch Logs monitor, store, and access your log files from Amazon Elastic C
 * Running the tests might result in charges to your AWS account.
 * We recommend that you grant your code least privilege. At most, grant only the minimum permissions required to perform the task. For more information, see [Grant least privilege](https://docs.aws.amazon.com/IAM/latest/UserGuide/best-practices.html#grant-least-privilege).
 * This code is not tested in every AWS Region. For more information, see [AWS Regional Services](https://aws.amazon.com/about-aws/global-infrastructure/regional-product-services).
-
-<!--custom.important.start-->
-<!--custom.important.end-->
 
 ## Code examples
 
@@ -31,92 +25,74 @@ Install the packages required by these examples by running the following in a vi
 python -m pip install -r requirements.txt
 ```
 
-<!--custom.prerequisites.start-->
-<!--custom.prerequisites.end-->
+### IAM permissions
+
+The following IAM permissions are required to run these examples:
+
+- `logs:CreateLogGroup`
+- `logs:CreateLogStream`
+- `logs:DeleteLogGroup`
+- `logs:DescribeLogGroups`
+- `logs:FilterLogEvents`
+- `logs:GetQueryResults`
+- `logs:PutLogEvents`
+- `logs:PutRetentionPolicy`
+- `logs:StartLiveTail`
+- `logs:StartQuery`
+
+### Get started
+
+- [Hello CloudWatch Logs](cloudwatch_logs_hello.py) (`DescribeLogGroups`)
+
+### Basics
+
+Code examples that show you how to perform the essential operations within a service.
+
+- [Learn the basics](scenario_cloudwatch_logs_basics.py)
 
 ### Single actions
 
 Code excerpts that show you how to call individual service functions.
 
-- [GetQueryResults](scenarios/large-query/cloudwatch_query.py#L204)
-- [StartQuery](scenarios/large-query/cloudwatch_query.py#L130)
-
-### Scenarios
-
-Code examples that show you how to accomplish a specific task by calling multiple
-functions within the same service.
-
-- [Run a large query](scenarios/large-query/exec.py)
-- [Use scheduled events to invoke a Lambda function](../../example_code/lambda)
-
-
-<!--custom.examples.start-->
-<!--custom.examples.end-->
+- [CreateLogGroup](cloudwatch-logs_wrapper.py#L59)
+- [CreateLogStream](cloudwatch-logs_wrapper.py#L85)
+- [DeleteLogGroup](cloudwatch-logs_wrapper.py#L385)
+- [DescribeLogGroups](cloudwatch-logs_wrapper.py#L174)
+- [FilterLogEvents](cloudwatch-logs_wrapper.py#L208)
+- [GetQueryResults](cloudwatch-logs_wrapper.py#L341)
+- [PutLogEvents](cloudwatch-logs_wrapper.py#L112)
+- [PutRetentionPolicy](cloudwatch-logs_wrapper.py#L147)
+- [StartLiveTail](cloudwatch-logs_wrapper.py#L256)
+- [StartQuery](cloudwatch-logs_wrapper.py#L310)
 
 ## Run the examples
 
-### Instructions
-
-
-<!--custom.instructions.start-->
-<!--custom.instructions.end-->
-
-
-
-#### Run a large query
-
-This example shows you how to use CloudWatch Logs to query more than 10,000 records.
-
-
-<!--custom.scenario_prereqs.cloudwatch-logs_Scenario_BigQuery.start-->
-<!--custom.scenario_prereqs.cloudwatch-logs_Scenario_BigQuery.end-->
-
-Start the example by running the following at a command prompt:
+### Run the scenario
 
 ```
-python scenarios/large-query/exec.py
+python scenario_cloudwatch_logs_basics.py
 ```
 
+### Run the Hello example
 
-<!--custom.scenarios.cloudwatch-logs_Scenario_BigQuery.start-->
-<!--custom.scenarios.cloudwatch-logs_Scenario_BigQuery.end-->
+```
+python cloudwatch_logs_hello.py
+```
 
-#### Use scheduled events to invoke a Lambda function
+## Tests
 
-This example shows you how to create an AWS Lambda function invoked by an Amazon EventBridge scheduled event.
+Run integration tests:
 
-
-<!--custom.scenario_prereqs.cross_LambdaScheduledEvents.start-->
-<!--custom.scenario_prereqs.cross_LambdaScheduledEvents.end-->
-
-
-<!--custom.scenarios.cross_LambdaScheduledEvents.start-->
-<!--custom.scenarios.cross_LambdaScheduledEvents.end-->
-
-### Tests
-
-⚠ Running tests might result in charges to your AWS account.
-
-
-To find instructions for running these tests, see the [README](../../README.md#Tests)
-in the `python` folder.
-
-
-
-<!--custom.tests.start-->
-<!--custom.tests.end-->
+```
+python -m pytest scenarios/cloudwatch-logs_basics_scenario.py -v
+```
 
 ## Additional resources
 
-- [CloudWatch Logs User Guide](https://docs.aws.amazon.com/AmazonCloudWatch/latest/logs/WhatIsCloudWatchLogs.html)
-- [CloudWatch Logs API Reference](https://docs.aws.amazon.com/AmazonCloudWatchLogs/latest/APIReference/Welcome.html)
-- [SDK for Python (Boto3) CloudWatch Logs reference](https://boto3.amazonaws.com/v1/documentation/api/latest/reference/services/cloudwatch-logs.html)
-
-<!--custom.resources.start-->
-<!--custom.resources.end-->
+- [Amazon CloudWatch Logs User Guide](https://docs.aws.amazon.com/AmazonCloudWatch/latest/logs/WhatIsCloudWatchLogs.html)
+- [Amazon CloudWatch Logs API Reference](https://docs.aws.amazon.com/AmazonCloudWatchLogs/latest/APIReference/Welcome.html)
+- [AWS SDK for Python (Boto3) CloudWatch Logs reference](https://boto3.amazonaws.com/v1/documentation/api/latest/reference/services/logs.html)
 
 ---
-
 Copyright Amazon.com, Inc. or its affiliates. All Rights Reserved.
-
 SPDX-License-Identifier: Apache-2.0

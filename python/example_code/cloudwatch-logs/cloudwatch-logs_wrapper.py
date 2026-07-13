@@ -12,7 +12,6 @@ Live Tail for real-time log streaming.
 
 import logging
 import time
-from datetime import datetime, timezone
 from typing import Any, Dict, List, Optional
 
 import boto3
@@ -58,7 +57,7 @@ class CloudWatchLogsWrapper:
         :raises ClientError: If the log group already exists or another error occurs.
         """
         try:
-            params = dict()
+            params = {}
             params["logGroupName"] = log_group_name
             if log_group_class is not None:
                 params["logGroupClass"] = log_group_class
@@ -182,14 +181,14 @@ class CloudWatchLogsWrapper:
         :raises ClientError: If parameters are invalid.
         """
         try:
-            log_groups = list()
+            log_groups = []
             paginator = self.logs_client.get_paginator("describe_log_groups")
-            params = dict()
+            params = {}
             if log_group_name_prefix is not None:
                 params["logGroupNamePrefix"] = log_group_name_prefix
             page_iterator = paginator.paginate(**params)
             for page in page_iterator:
-                log_groups.extend(page.get("logGroups", list()))
+                log_groups.extend(page.get("logGroups", []))
             logger.info("Described %d log group(s).", len(log_groups))
             return log_groups
         except ClientError as error:
@@ -222,9 +221,9 @@ class CloudWatchLogsWrapper:
         :raises ClientError: If the log group doesn't exist.
         """
         try:
-            events = list()
+            events = []
             paginator = self.logs_client.get_paginator("filter_log_events")
-            params = dict()
+            params = {}
             params["logGroupName"] = log_group_name
             if filter_pattern is not None:
                 params["filterPattern"] = filter_pattern
@@ -236,7 +235,7 @@ class CloudWatchLogsWrapper:
                 params["logStreamNames"] = log_stream_names
             page_iterator = paginator.paginate(**params)
             for page in page_iterator:
-                events.extend(page.get("events", list()))
+                events.extend(page.get("events", []))
             logger.info("Found %d matching log event(s).", len(events))
             return events
         except ClientError as error:
@@ -267,7 +266,7 @@ class CloudWatchLogsWrapper:
         :raises ClientError: If parameters are invalid.
         """
         try:
-            params = dict()
+            params = {}
             params["logGroupIdentifiers"] = log_group_identifiers
             if log_stream_names is not None:
                 params["logStreamNames"] = log_stream_names
@@ -276,7 +275,7 @@ class CloudWatchLogsWrapper:
 
             response = self.logs_client.start_live_tail(**params)
             event_stream = response["responseStream"]
-            session_events = list()
+            session_events = []
             start_time = time.time()
 
             for event in event_stream:
@@ -290,7 +289,7 @@ class CloudWatchLogsWrapper:
                         session_start.get("sessionId", "unknown"),
                     )
                 elif "sessionUpdate" in event:
-                    log_events = event["sessionUpdate"].get("sessionResults", list())
+                    log_events = event["sessionUpdate"].get("sessionResults", [])
                     session_events.extend(log_events)
                     for log_event in log_events:
                         logger.info(
@@ -335,7 +334,7 @@ class CloudWatchLogsWrapper:
         :raises ClientError: If the query string is malformed.
         """
         try:
-            params = dict()
+            params = {}
             params["logGroupName"] = log_group_name
             params["queryString"] = query_string
             params["startTime"] = start_time
@@ -357,17 +356,19 @@ class CloudWatchLogsWrapper:
     # snippet-end:[python.example_code.cloudwatch-logs.StartQuery]
 
     # snippet-start:[python.example_code.cloudwatch-logs.GetQueryResults]
-    def get_query_results(self, query_id: str) -> Dict[str, Any]:
+    def get_query_results(self, query_id: str, max_attempts: int = 120) -> Dict[str, Any]:
         """
         Retrieves the results of a CloudWatch Logs Insights query.
         Polls until the query status is Complete, Failed, Cancelled, or Timeout.
 
         :param query_id: The ID of the query to retrieve results for.
+        :param max_attempts: Maximum number of polling attempts (default 120 = ~2 minutes).
         :return: A dictionary containing 'status', 'results', and 'statistics'.
         :raises ClientError: If the query ID is invalid.
+        :raises TimeoutError: If the query does not complete within max_attempts.
         """
         try:
-            while True:
+            for _attempt in range(max_attempts):
                 time.sleep(1)
                 response = self.logs_client.get_query_results(queryId=query_id)
                 status = response.get("status", "Unknown")
@@ -375,9 +376,12 @@ class CloudWatchLogsWrapper:
                     logger.info("Query '%s' completed with status '%s'.", query_id, status)
                     return {
                         "status": status,
-                        "results": response.get("results", list()),
-                        "statistics": response.get("statistics", dict()),
+                        "results": response.get("results", []),
+                        "statistics": response.get("statistics", {}),
                     }
+            raise TimeoutError(
+                f"Query '{query_id}' did not complete after {max_attempts} attempts."
+            )
         except ClientError as error:
             if error.response["Error"]["Code"] == "ResourceNotFoundException":
                 logger.error(

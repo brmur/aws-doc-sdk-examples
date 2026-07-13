@@ -29,9 +29,9 @@ def hello_cloudwatch_logs():
     try:
         paginator = logs_client.get_paginator("describe_log_groups")
         page_iterator = paginator.paginate()
-        log_groups = list()
+        log_groups = []
         for page in page_iterator:
-            log_groups.extend(page.get("logGroups", list()))
+            log_groups.extend(page.get("logGroups", []))
 
         for log_group in log_groups:
             name = log_group.get("logGroupName", "N/A")
