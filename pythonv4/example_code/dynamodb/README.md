@@ -1,8 +1,8 @@
-# DynamoDB code examples for the SDK for Python
+# DynamoDB code examples for the SDK for Python v4
 
 ## Overview
 
-Shows how to use the AWS SDK for Python to work with Amazon DynamoDB.
+Shows how to use the AWS SDK for Python v4 to work with Amazon DynamoDB.
 
 <!--custom.overview.start-->
 AWS SDK for Python — an async-native, per-service SDK being developed as a successor/complement to Boto3. It is:
@@ -85,7 +85,7 @@ in the `pythonv4` folder.
 
 - [DynamoDB Developer Guide](https://docs.aws.amazon.com/amazondynamodb/latest/developerguide/Introduction.html)
 - [DynamoDB API Reference](https://docs.aws.amazon.com/amazondynamodb/latest/APIReference/Welcome.html)
-- [SDK for Python DynamoDB reference](https://docs.aws.amazon.com/sdk-for-python/v4/reference/clients/dynamodb.html)
+- [SDK for Python v4 DynamoDB reference](https://docs.aws.amazon.com/sdk-for-python/v4/reference/clients/dynamodb)
 
 <!--custom.resources.start-->
 
