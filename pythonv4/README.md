@@ -1,4 +1,4 @@
-# AWS SDK for Python code examples
+# AWS SDK for Python v4 code examples
 
 ## Overview
 
