@@ -48,10 +48,10 @@ from cloudwatch_otel import CloudWatchOTelWrapper
 
 logger = logging.getLogger(__name__)
 
-DEFAULT_QUERY = f"avg by (host) (system_cpu_utilization) > {CPU_ALARM_THRESHOLD}"
-
 # CPU utilization percentage above which the PromQL alarm should fire.
 CPU_ALARM_THRESHOLD = 80
+
+DEFAULT_QUERY = f"avg by (host) (system_cpu_utilization) > {CPU_ALARM_THRESHOLD}"
 
 # Valid evaluation intervals are 10, 20, 30, or any multiple of 60 up to 3600 seconds.
 EVALUATION_INTERVAL = 60
