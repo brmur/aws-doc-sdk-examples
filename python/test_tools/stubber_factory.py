@@ -9,11 +9,13 @@ This factory is used by the make_stubber fixture found in the set of common fixt
 """
 
 from test_tools.acm_stubber import AcmStubber
+from test_tools.athena_stubber import AthenaStubber
 from test_tools.apigateway_stubber import ApiGatewayStubber
 from test_tools.apigatewaymanagementapi_stubber import ApiGatewayManagementApiStubber
 from test_tools.apigateway_v2_stubber import ApiGatewayV2Stubber
 from test_tools.auditmanager_stubber import AuditManagerStubber
 from test_tools.autoscaling_stubber import AutoScalingStubber
+from test_tools.batch_stubber import BatchStubber
 from test_tools.bedrock_stubber import BedrockStubber
 from test_tools.bedrock_runtime_stubber import BedrockRuntimeStubber
 from test_tools.bedrock_agent_stubber import BedrockAgentStubber
@@ -35,6 +37,7 @@ from test_tools.emr_stubber import EmrStubber
 from test_tools.eventbridge_stubber import EventBridgeStubber
 from test_tools.glacier_stubber import GlacierStubber
 from test_tools.glue_stubber import GlueStubber
+from test_tools.greengrassv2_stubber import GreengrassV2Stubber
 from test_tools.iam_stubber import IamStubber
 from test_tools.iot_stubber import IoTStubber
 from test_tools.iot_sitewise_stubber import IoTSitewiseStubber
@@ -79,6 +82,8 @@ class StubberFactoryNotImplemented(Exception):
 def stubber_factory(service_name):
     if service_name == "acm":
         return AcmStubber
+    elif service_name == "athena":
+        return AthenaStubber
     elif service_name == "apigateway":
         return ApiGatewayStubber
     elif service_name == "apigatewaymanagementapi":
@@ -89,6 +94,8 @@ def stubber_factory(service_name):
         return AuditManagerStubber
     elif service_name == "autoscaling":
         return AutoScalingStubber
+    elif service_name == "batch":
+        return BatchStubber
     elif service_name == "bedrock":
         return BedrockStubber
     elif service_name == "bedrock-runtime":
@@ -139,6 +146,8 @@ def stubber_factory(service_name):
         return GlacierStubber
     elif service_name == "glue":
         return GlueStubber
+    elif service_name == "greengrassv2":
+        return GreengrassV2Stubber
     elif service_name == "iam":
         return IamStubber
     elif service_name == "iot":
